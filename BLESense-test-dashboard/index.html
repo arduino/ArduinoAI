@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,50 +16,54 @@
 
   #bigButton {
     background-color: aqua; border: none; color: black; padding: 1px; text-align: center;
-    text-decoration: none; font-size: 4px; margin: 8px 10px; height: 10px; width: 20px;
+    text-decoration: none; font-size: 6px; margin: 12px 20px; height: 15px; width: 30px;
     border-radius: 10%; outline:none; font-family: 'Roboto', sans-serif;
+  }
+
+  .container {
+    width:960px;height:384px;margin-top:30px;margin-bottom:7.5px;  margin: 0 auto;
   }
 
   .widget {
     background: #111111;
     border: 1px solid #000000;
     border-radius: 0px;
-    padding: 8px;
-    margin: 4px;
+    padding: 12px;
+    margin: 6px;
     float: left;
   }
 
   .status {
     background-image: url("aiot.png");
-    background-size: 166px 28px;
+    background-size: 249px 42px;
     background-position: 98% 50%;
     background-repeat: no-repeat;
-    width: 590px;  height: 28px;
+    width: 885px;  height: 42px;
     color: white;
   }
 
   .square {
-    width: 128px;  height: 128px;
+    width: 192px;  height: 192px;
     position: relative;
   }
 
   .label {
-    height: 10px;
+    height: 15px;
     display: inline;
-    font-size: 10px;
+    font-size: 15px;
   }
 
   .digit {
-    font-size: 20px;
+    font-size: 30px;
     color: #888888;
     float: right;
   }
 
-  .short {width: 128px;  height: 64px;}
-  .double {width: 282px;  height: 128px;}
-  .graph{width: 128px;  height: 118px;}
-  .doublegraph{width: 282px;  height: 118px;}
-  .shortgraph{width: 128px;  height: 54px;}
+  .short {width: 192px;  height: 96px;}
+  .double {width: 423px;  height: 192px;}
+  .graph{width: 192px;  height: 177px;}
+  .doublegraph{width: 423px;  height: 177px;}
+  .shortgraph{width: 192px;  height: 81px;}
 
   #color-picker-container {
     display: flex;
@@ -69,7 +74,7 @@
 </head>
 <body>
 
-  <div style="width:640px;height:256px;margin-top:20px;margin-bottom:5px;  margin: 0 auto;">
+  <div class="container">
     <div class="status widget">
       <button id="bigButton" onclick="connect()"></button>
       <div class="label">Arduino Nano 33 BLE Sense: </div>
@@ -110,7 +115,7 @@
 
     <div class="square widget">
       <div class="label">&#127912;Colorimeter</div>
-      <canvas id="colors"></canvas>
+      <canvas id="colors" class="graph"></canvas>
     </div>
 
     <div class="short widget">
@@ -343,12 +348,12 @@ async function connect() {
 
   function initColorPicker(){
     BLEsense.led.colorPicker = new iro.ColorPicker("#color-picker-container", {
-      width: 100,
+      width: 150,
       color: "rgb(255, 0, 0)",
       borderWidth: 1,
       borderColor: "#fff",
-      sliderHeight: 4,
-      sliderMargin: 4
+      sliderHeight: 6,
+      sliderMargin: 6
     });
     // RGB Color Picker
     BLEsense.led.colorPicker.on('color:change', updateModelLed);
@@ -402,8 +407,10 @@ async function connect() {
 function initSpectrum(){
   var canvas = document.getElementById('mic');
   const micctx = canvas.getContext('2d');
+  const bucketLabels = Object.keys(BLEsense['microphone'].data);
   micctx.fillStyle = "#111111";//"rgba("+R+","+G+","+B+")";
   micctx.fillRect(0, 0, canvas.width, canvas.height);
+  const thickness = canvas.width / bucketLabels.length;
   canvas = document.getElementById('micbg');
   const bgctx = canvas.getContext('2d');
   bgctx.fillStyle = "#111111";
@@ -415,7 +422,7 @@ function initSpectrum(){
       g++;
       if (j>64) {r-=2;}
       bgctx.fillStyle = "rgba("+r+","+g+","+b+")";
-      bgctx.fillRect(i*16, j, 12, 1);
+      bgctx.fillRect(i*thickness, j, thickness-1, 1);
     }
   }
 }
@@ -429,7 +436,7 @@ function init3D(){
   var container = document.getElementById( '3d' );
   var loader = new THREE.GLTFLoader();
   scene.background = new THREE.Color( 0x111111 );
-  renderer.setSize( 118, 118 );
+  renderer.setSize( 177, 177 );
   renderer.setPixelRatio( 4 );
   container.appendChild( renderer.domElement );
   loader.load( 'models/nano33ble.glb',
@@ -475,18 +482,17 @@ function colorBars(sensor){
   // Color + light
   const canvas = document.getElementById('colors');
   const ctx = canvas.getContext('2d');
-  const thickness = Math.floor(128/maxRecords);
+  const thickness = canvas.width/maxRecords;
   ctx.fillStyle = "#111111";
-  ctx.fillRect(0, 0, 130, 118);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   for (i=0;i<maxRecords;i++){
     R = BLEsense[sensor].data.R[i];
     G = BLEsense[sensor].data.G[i];
     B = BLEsense[sensor].data.B[i];
     total = R + G + B;
-    factor = 4;
-    R=R*factor;G=G*factor;B=B*factor;
+    R=R/total*255;G=G/total*255;B=B/total*255;
     ctx.fillStyle = "rgba("+R+","+G+","+B+")";
-    ctx.fillRect(i*thickness+1, 100, thickness, Math.floor(-5-(total/4)));
+    ctx.fillRect(i*thickness, 128, thickness-1, -total/5);
   }
 }
 // return last item of array
@@ -496,11 +502,12 @@ function spectrumAnalyser(sensor){
   const canvas = document.getElementById('mic');
   const micctx = canvas.getContext('2d');
   const bucketLabels = Object.keys(BLEsense[sensor].data);
+  const thickness = canvas.width / bucketLabels.length;
   micctx.fillStyle = "#111111";
   micctx.fillRect(0, 0, canvas.width, canvas.height); // mask bars beneath
   for (i=0;i<bucketLabels.length;i++){
     var value = BLEsense[sensor].data[bucketLabels[i]].latest(); // display for latest record
-    micctx.clearRect(i*16, 128, 16, -value);
+    micctx.clearRect(i*thickness, 128, thickness-1, -value);
   }
   spectrogram(sensor);
 }
@@ -510,7 +517,8 @@ function spectrogram(sensor){
   const ctx = canvas.getContext('2d');
   const bucketLabels = Object.keys(BLEsense[sensor].data);
   const records = BLEsense[sensor].data[bucketLabels[1]].length;
-  const thickness = 128/maxRecords;
+  const vthickness = 128/maxRecords;
+  const thickness = canvas.width / bucketLabels.length;
   ctx.fillStyle = "#111111";
   ctx.fillRect(0, 0, 256, 256);
   for (i=0;i<bucketLabels.length;i++){ // for each fft bucket
@@ -519,7 +527,7 @@ function spectrogram(sensor){
       var hue = (1 - value) * 240;
       ctx.fillStyle = "hsl("+hue+",100%,50%)";
       if (value<0.02) {ctx.fillStyle = "#111111";}
-      ctx.fillRect((i*16),j*thickness, 16,thickness-1);}
+      ctx.fillRect(i*thickness,j*vthickness, thickness-1,vthickness-1);}
     }
   }
 
