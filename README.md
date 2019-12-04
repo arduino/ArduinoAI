@@ -10,7 +10,9 @@ This is a temporary website linking some of the demos and tools we build to supp
 [Fruit identification using Arduino and TensorFlow](https://blog.arduino.cc/2019/11/07/fruit-identification-using-arduino-and-tensorflow/)
 
 
-## Tools
+## BLE Sense Demo Dashboard
 
-[BLE Sense Demo Dashboard](https://arduino.github.io/ArduinoAI/BLESense-test-dashboard)
+[BLE Sense Demo - Arduino sketch](https://create.arduino.cc/editor/dpajak/e4128780-d76d-438f-97a4-541740cb0473/preview)
+
+[BLE Sense Demo - Web Dashboard](https://arduino.github.io/ArduinoAI/BLESense-test-dashboard)
 
