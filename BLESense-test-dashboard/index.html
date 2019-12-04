@@ -75,10 +75,10 @@
 <body>
 
   <div class="container">
+    <div class="label">&nbsp;&nbsp;IMPORTANT - first upload <a href="https://create.arduino.cc/editor/dpajak/e4128780-d76d-438f-97a4-541740cb0473/preview">sketch</a> to Arduino Nano 33 BLE Sense board<br></div>
     <div class="status widget">
-      <button id="bigButton" onclick="connect()"></button>
-      <div class="label">Arduino Nano 33 BLE Sense: </div>
-      <div class="label" id="bluetooth">Click to connect</div>
+      <button id="bigButton"></button>
+      <div class="label" id="bluetooth">Click button to connect to the board</div>
     </div>
 
     <div class="square widget" id="3d">
@@ -156,6 +156,8 @@ Based on: https://developers.google.com/web/updates/2015/07/interact-with-ble-de
 For earlier versions of Windows and Linux, you still have to go to chrome://flags/#enable-experimental-web-platform-features,
 enable the highlighted flag, and restart Chrome for now.
 */
+
+
 
 var maxRecords = 64;
 
@@ -240,6 +242,16 @@ var bytesPrevious = 0;
 // UI elements
 const bigButton = document.getElementById('bigButton');
 const BLEstatus = document.getElementById('bluetooth');
+
+if ("bluetooth" in navigator) {
+  bigButton.addEventListener('click', function(event) {
+    connect();
+  });
+  // else the browser doesn't support bluetooth
+} else {
+  msg("browser not supported"); bigButton.style.backgroundColor = "red";
+  alert("Error: This browser doesn't support Web Bluetooth. Try using Chrome.");
+}
 
 function msg(m){
   BLEstatus.innerHTML = m;
