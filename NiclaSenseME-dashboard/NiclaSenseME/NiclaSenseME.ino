@@ -1,9 +1,9 @@
 /*
 
-Arduino Nano BLE Sense dashboard demo
+Arduino Nicla Sense ME BLE Sense dashboard demo
 
 
-Hardware required: https://store.arduino.cc/nano-33-ble-sense
+Hardware required: https://store.arduino.cc/nicla-sense-me
 
 1) Upload this sketch to the Arduino Nano BLE sense board
 
@@ -16,6 +16,7 @@ https://arduino.github.io/ArduinoAI/BLESense-test-dashboard/
 Web dashboard by D Pajak
 
 Device sketch based on example by Sandeep Mistry
+Sketch fixed to be used with the Nicla Sense ME by Pablo Marquínez
 
 */
 #include "Nicla_System.h"
@@ -39,12 +40,6 @@ BLECharacteristic rgbLedCharacteristic(BLE_SENSE_UUID("7001"), BLERead | BLEWrit
 
 // String to calculate the local and device name
 String name;
-
-// buffer to read samples into, each sample is 16-bits
-//short sampleBuffer[256];
-
-// number of samples read
-//volatile int samplesRead;
 
 Sensor temperature(SENSOR_ID_TEMP);
 Sensor humidity(SENSOR_ID_HUM);
@@ -111,33 +106,7 @@ void setup()
 
   rgbLedCharacteristic.setEventHandler(BLEWritten, onRgbLedCharacteristicWrite);
 
-  /*
-  service.addCharacteristic(gyroscopeCharacteristicX);
-  service.addCharacteristic(gyroscopeCharacteristicY);
-  service.addCharacteristic(gyroscopeCharacteristicZ);
-  
-  service.addCharacteristic(accelerometerCharacteristicX);
-  service.addCharacteristic(accelerometerCharacteristicY);
-  service.addCharacteristic(accelerometerCharacteristicZ);*/
-
-  /*service.addCharacteristic(accelX);
-  service.addCharacteristic(accelY);
-  service.addCharacteristic(accel);*/
-
-  //service.addCharacteristic(gyroscopeCharacteristic);
-
   versionCharacteristic.setValue(VERSION);
-
-  /*
-  gyroscopeCharacteristicX.setEventHandler(BLERead, ongyroscopeCharacteristicXRead);
-  gyroscopeCharacteristicY.setEventHandler(BLERead, ongyroscopeCharacteristicYRead);
-  gyroscopeCharacteristicZ.setEventHandler(BLERead, ongyroscopeCharacteristicZRead);
-
-  accelerometerCharacteristicX.setEventHandler(BLERead, onAccelerometerCharacteristicXRead);
-  accelerometerCharacteristicY.setEventHandler(BLERead, onAccelerometerCharacteristicYRead);
-  accelerometerCharacteristicZ.setEventHandler(BLERead, onAccelerometerCharacteristicZRead);
-  */
-  //gyroscopeCharacteristicX.setValue(55);
 
   BLE.addService(service);
 
@@ -174,60 +143,6 @@ void loop()
     }
   }
 }
-/*
-void ongyroscopeCharacteristicRead(BLEDevice central, BLECharacteristic a){
-  int16_t myArray[] = {1,2,3};
-
-  gyroscopeCharacteristic.writeValue(myArray, sizeof(myArray));
-}*/
-/*
-void ongyroscopeCharacteristicXRead(BLEDevice central, BLECharacteristic characteristic)
-{
-  BHY2.update(1);
-  int16_t x = gyroscope.x();
-  Serial.println(x);
-  gyroscopeCharacteristicX.writeValue((int16_t)x);
-}
-
-void ongyroscopeCharacteristicYRead(BLEDevice central, BLECharacteristic characteristic)
-{
-  BHY2.update(1);
-  int16_t y = gyroscope.y();
-  Serial.println(y);
-  gyroscopeCharacteristicY.writeValue((int16_t)y);
-}
-
-void ongyroscopeCharacteristicZRead(BLEDevice central, BLECharacteristic characteristic)
-{
-  BHY2.update(1);
-  int16_t z = gyroscope.z();
-  Serial.println(z);
-  gyroscopeCharacteristicZ.writeValue((int16_t)z);
-}
-
-
-void onAccelerometerCharacteristicXRead(BLEDevice central, BLECharacteristic characteristic)
-{
-  BHY2.update(1);
-  int16_t x = accelerometer.x();
-  
-  accelerometerCharacteristicX.writeValue((int16_t)x);
-}
-void onAccelerometerCharacteristicYRead(BLEDevice central, BLECharacteristic characteristic)
-{
-  BHY2.update(1);
-  int16_t y = accelerometer.y();
-  
-  accelerometerCharacteristicX.writeValue((int16_t)y);
-}
-void onAccelerometerCharacteristicZRead(BLEDevice central, BLECharacteristic characteristic)
-{
-  BHY2.update(1);
-  int16_t z = accelerometer.z();
-  
-  accelerometerCharacteristicX.writeValue((int16_t)z);
-}
-*/
 
 void onTemperatureCharacteristicRead(BLEDevice central, BLECharacteristic characteristic)
 {
