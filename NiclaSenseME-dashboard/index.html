@@ -1,180 +1,288 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Arduino Nano BLE Sense - Web BLE test</title>
+  <title>Arduino Nicla Sense ME - Web BLE test</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@jaames/iro/dist/iro.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js"></script>
   <script src="GLTFLoader.js"></script>
   <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: #888888;
+      background: #000000;
+      font-size: small;
+    }
 
-  body {
-    font-family: 'Roboto', sans-serif; color: #888888; background: #000000; font-size: small;
-  }
+    #bigButton {
+      background-color: aqua;
+      border: none;
+      color: black;
+      padding: 1px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 6px;
+      margin: 12px 20px;
+      height: 15px;
+      width: 30px;
+      border-radius: 10%;
+      outline: none;
+      font-family: 'Roboto', sans-serif;
+    }
 
-  #bigButton {
-    background-color: aqua; border: none; color: black; padding: 1px; text-align: center;
-    text-decoration: none; font-size: 6px; margin: 12px 20px; height: 15px; width: 30px;
-    border-radius: 10%; outline:none; font-family: 'Roboto', sans-serif;
-  }
+    .container {
+      width: 960px;
+      height: 384px;
+      margin-top: 30px;
+      margin-bottom: 7.5px;
+      margin: 0 auto;
+    }
 
-  .container {
-    width:960px;height:384px;margin-top:30px;margin-bottom:7.5px;  margin: 0 auto;
-  }
+    .widget {
+      background: #111111;
+      border: 1px solid #000000;
+      border-radius: 0px;
+      padding: 12px;
+      margin: 6px;
+      float: left;
+    }
 
-  .widget {
-    background: #111111;
-    border: 1px solid #000000;
-    border-radius: 0px;
-    padding: 12px;
-    margin: 6px;
-    float: left;
-  }
+    .status {
+      background-image: url("logo.png");
+      background-size: 80px;
+      background-position: 98% 50%;
+      background-repeat: no-repeat;
+      width: 885px;
+      height: 42px;
+      color: white;
+    }
 
-  .status {
-    background-image: url("logo.png");
-    background-size: 80px;
-    background-position: 98% 50%;
-    background-repeat: no-repeat;
-    width: 885px;  height: 42px;
-    color: white;
-  }
+    .square {
+      width: 192px;
+      height: 192px;
+      position: relative;
+    }
 
-  .square {
-    width: 192px;  height: 192px;
-    position: relative;
-  }
+    .label {
+      height: 15px;
+      display: inline;
+      font-size: 15px;
+    }
 
-  .label {
-    height: 15px;
-    display: inline;
-    font-size: 15px;
-  }
+    .digit {
+      font-size: 30px;
+      color: #888888;
+      float: right;
+    }
 
-  .digit {
-    font-size: 30px;
-    color: #888888;
-    float: right;
-  }
+    .short {
+      width: 192px;
+      height: 96px;
+    }
 
-  .short {width: 192px;  height: 96px;}
-  .double {width: 423px;  height: 192px;}
-  .graph{width: 192px;  height: 177px;}
-  .doublegraph{width: 423px;  height: 177px;}
-  .shortgraph{width: 192px;  height: 81px;}
+    .double {
+      width: 423px;
+      height: 192px;
+    }
 
-  #color-picker-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    .graph {
+      width: 192px;
+      height: 177px;
+    }
+
+    .doublegraph {
+      width: 423px;
+      height: 177px;
+    }
+
+    .shortgraph {
+      width: 192px;
+      height: 81px;
+    }
+
+    #color-picker-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   </style>
 </head>
+
 <body>
 
   <div class="container">
-    <div class="label">&nbsp;&nbsp;IMPORTANT - first upload <a href="https://create.arduino.cc/editor/dpajak/e4128780-d76d-438f-97a4-541740cb0473/preview">sketch</a> to Arduino Nano 33 BLE Sense board<br></div>
+    <div class="label">&nbsp;&nbsp;IMPORTANT - first upload <a
+        href="https://create.arduino.cc/editor/dpajak/e4128780-d76d-438f-97a4-541740cb0473/preview">sketch</a> to
+      Arduino Nicla Sense ME<br></div>
     <div class="status widget">
       <button id="bigButton"></button>
       <div class="label" id="bluetooth">Click button to connect to the board</div>
     </div>
-    
-    <div class="double widget">
-      <div class="label">&#9925; gyroX - </div>
-      <div class="label" id="gyroX-value"></div>
-      <div class="label">*</div>
-      <div class="doublegraph" id="gyroX"></div>
+
+    <div class="square widget" id="3d">
+      <div class="label">&#128230;3D</div>
     </div>
 
-    
 
+    <div class="double widget">
+      <div class="label">&#128640; Accelerometer</div>
+      <div id="accelerometer" class="doublegraph"></div>
+    </div>
+
+    <div class="square widget">
+      <div class="label">&#128171; Gyroscope</div>
+      <div class="label" id="gyroscope-value"></div>
+      <div id="gyroscope" class="graph"></div>
+    </div>
+
+    <div class="square widget">
+      <div class="label">&#128161; RGB LED control</div>
+      <div id="color-picker-container" class="graph"></div>
+    </div>
+
+    <div class="short widget">
+      <div class="label">&#127777; Temperature - </div>
+      <div class="label" id="temperature-value"></div>
+      <div class="label">&deg;C</div>
+      <div class="shortgraph" id="temperature"></div>
+    </div>
+
+    <div class="short widget">
+      <div class="label">&#128167; Humidity - </div>
+      <div class="label" id="humidity-value"></div>
+      <div class="label">%</div>
+      <div class="shortgraph" id="humidity"></div>
+
+    </div>
+
+    <div class="short widget">
+      <div class="label">&#9925; Pressure - </div>
+      <div class="label" id="pressure-value"></div>
+      <div class="label">kPa</div>
+      <div class="shortgraph" id="pressure"></div>
+    </div>
   </div>
 </body>
 <script type="text/javascript">
-/*
-Demo showing simple dashboard of Arduino BLE sense
+  /*
+  Demo showing simple dashboard of Arduino BLE sense
+  
+  Based on: https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web
+  For earlier versions of Windows and Linux, you still have to go to chrome://flags/#enable-experimental-web-platform-features,
+  enable the highlighted flag, and restart Chrome for now.
+  */
 
-Based on: https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web
-For earlier versions of Windows and Linux, you still have to go to chrome://flags/#enable-experimental-web-platform-features,
-enable the highlighted flag, and restart Chrome for now.
-*/
+  var maxRecords = 64;
 
+  var BLEsense =
+  {
 
-
-var maxRecords = 64;
-
-var BLEsense =
-{
-  gyroX:{
-    uuid: '6fbe1da7-2001-44de-92c4-bb6e04fb0212',
-    properties: ['BLERead'],
-    structure: ['Int16'],
-    data: {'Gx':[20,30]}
-  }
-}
-
-
-const sensors = Object.keys(BLEsense);
-const SERVICE_UUID = '6fbe1da7-0000-44de-92c4-bb6e04fb0212';
-var bytesReceived = 0;
-var bytesPrevious = 0;
-
-// UI elements
-const bigButton = document.getElementById('bigButton');
-const BLEstatus = document.getElementById('bluetooth');
-
-if ("bluetooth" in navigator) {
-  bigButton.addEventListener('click', function(event) {
-    connect();
-  });
-  // else the browser doesn't support bluetooth
-} else {
-  msg("browser not supported"); bigButton.style.backgroundColor = "red";
-  alert("Error: This browser doesn't support Web Bluetooth. Try using Chrome.");
-}
-
-function msg(m){
-  BLEstatus.innerHTML = m;
-}
-
-async function connect() {
-  bigButton.style.backgroundColor="grey";
-  msg('requesting device ...');
-
-  const device = await navigator.bluetooth.requestDevice({
-    filters: [
-      {
-        services: [SERVICE_UUID] // SERVICE_UUID
-      }
-    ]
-  });
-
-  msg('connecting to device ...');
-  device.addEventListener('gattserverdisconnected', onDisconnected);
-  const server = await device.gatt.connect();
-
-  msg('getting primary service ...');
-  const service = await server.getPrimaryService(SERVICE_UUID);
-
-  // Set up the characteristics
-  for (const sensor of sensors) {
-    msg('characteristic '+sensor+"...");
-    BLEsense[sensor].characteristic = await service.getCharacteristic(BLEsense[sensor].uuid);
-    // Set up notification
-    console.log(BLEsense[sensor]);
-    if (BLEsense[sensor].properties.includes("BLENotify")){
-      BLEsense[sensor].characteristic.addEventListener('characteristicvaluechanged',function(event){handleIncoming(BLEsense[sensor],event.target.value);});
-      await BLEsense[sensor].characteristic.startNotifications();
+    //Could not haave more than a value per characteristic due to error: InvalidModificationError: GATT Error: invalid attribute length.
+    temperature:
+    {
+      uuid: '6fbe1da7-2001-44de-92c4-bb6e04fb0212',
+      properties: ['BLERead'],
+      structure: ['Float32'],
+      data: { temperature: [] }
+    },
+    humidity:
+    {
+      uuid: '6fbe1da7-3001-44de-92c4-bb6e04fb0212',
+      properties: ['BLERead'],
+      structure: ['Uint8'],
+      data: { humidity: [] }
+    },
+    pressure:
+    {
+      uuid: '6fbe1da7-4001-44de-92c4-bb6e04fb0212',
+      properties: ['BLERead'],
+      structure: ['Uint8'],
+      data: { pressure: [] }
+    },
+    accelerometer:
+    {
+      uuid: '6fbe1da7-5001-44de-92c4-bb6e04fb0212',
+      properties: ['BLENotify'],
+      structure: ['Float32', 'Float32', 'Float32'],
+      data: { 'Ax': [], 'Ay': [], 'Az': [] }
+    },
+    gyroscope:
+    {
+      uuid: '6fbe1da7-6001-44de-92c4-bb6e04fb0212',
+      properties: ['BLENotify'],
+      structure: ['Int16', 'Int16', 'Int16'],
+      data: { 'x': [], 'y': [], 'z': [] }
+    },
+    led: {
+      uuid: '6fbe1da7-7001-44de-92c4-bb6e04fb0212',
+      properties: ['BLEWrite'],
+      structure: ['Uint8', 'Uint8', 'Uint8'],
+      data: { 'R': [], 'G': [], 'B': [] },
+      writeBusy: false, // we need to track this to avoid 'GATT operation in progress' errors
+      writeValue: null
     }
-    // Set up polling for read
-    if (BLEsense[sensor].properties.includes("BLERead")){
-      console.log("Includes READ")
-      BLEsense[sensor].polling = setInterval(function() {
-        //console.log(BLEsense[sensor].data);
-        BLEsense[sensor].characteristic.readValue().then(function(data){handleIncoming(BLEsense[sensor],data); })}
-        , 500);
+  }
+
+
+  const sensors = Object.keys(BLEsense);
+  const SERVICE_UUID = '6fbe1da7-0000-44de-92c4-bb6e04fb0212';
+  var bytesReceived = 0;
+  var bytesPrevious = 0;
+
+  // UI elements
+  const bigButton = document.getElementById('bigButton');
+  const BLEstatus = document.getElementById('bluetooth');
+
+  if ("bluetooth" in navigator) {
+    bigButton.addEventListener('click', function (event) {
+      connect();
+    });
+    // else the browser doesn't support bluetooth
+  } else {
+    msg("browser not supported"); bigButton.style.backgroundColor = "red";
+    alert("Error: This browser doesn't support Web Bluetooth. Try using Chrome.");
+  }
+
+  function msg(m) {
+    BLEstatus.innerHTML = m;
+  }
+
+  async function connect() {
+    bigButton.style.backgroundColor = "grey";
+    msg('requesting device ...');
+
+    const device = await navigator.bluetooth.requestDevice({
+      filters: [
+        {
+          services: [SERVICE_UUID] // SERVICE_UUID
+        }
+      ]
+    });
+
+    msg('connecting to device ...');
+    device.addEventListener('gattserverdisconnected', onDisconnected);
+    const server = await device.gatt.connect();
+
+    msg('getting primary service ...');
+    const service = await server.getPrimaryService(SERVICE_UUID);
+
+    // Set up the characteristics
+    for (const sensor of sensors) {
+      msg('characteristic ' + sensor + "...");
+      BLEsense[sensor].characteristic = await service.getCharacteristic(BLEsense[sensor].uuid);
+      // Set up notification
+      if (BLEsense[sensor].properties.includes("BLENotify")) {
+        BLEsense[sensor].characteristic.addEventListener('characteristicvaluechanged', function (event) { handleIncoming(BLEsense[sensor], event.target.value); });
+        await BLEsense[sensor].characteristic.startNotifications();
+      }
+      // Set up polling for read
+      if (BLEsense[sensor].properties.includes("BLERead")) {
+        BLEsense[sensor].polling = setInterval(function () {
+          BLEsense[sensor].characteristic.readValue().then(function (data) { handleIncoming(BLEsense[sensor], data); })
+        }
+          , 500);
       }
 
       BLEsense[sensor].rendered = false;
@@ -182,45 +290,43 @@ async function connect() {
     bigButton.style.backgroundColor = 'green';
     msg('connected.');
 
+    initColorPicker();
   }
 
   function handleIncoming(sensor, dataReceived) {
     const columns = Object.keys(sensor.data); // column headings for this sensor
-    //console.log(columns);
     const typeMap = {
-      "Uint8":    {fn:DataView.prototype.getUint8,    bytes:1},
-      "Uint16":   {fn:DataView.prototype.getUint16,   bytes:2},
-      "Int16":   {fn:DataView.prototype.getInt16,   bytes:2},
-      "Float32":  {fn:DataView.prototype.getFloat32,  bytes:4}
+      "Uint8": { fn: DataView.prototype.getUint8, bytes: 1 },
+      "Uint16": { fn: DataView.prototype.getUint16, bytes: 2 },
+      "Int16": { fn: DataView.prototype.getInt16, bytes: 2 },
+      "Float32": { fn: DataView.prototype.getFloat32, bytes: 4 }
     };
-    var packetPointer = 0,i = 0;
+    var packetPointer = 0, i = 0;
+
     // Read each sensor value in the BLE packet and push into the data array
-    //console.log(sensor.structure);
-    sensor.structure.forEach(function(dataType){
+    sensor.structure.forEach(function (dataType) {
       // Lookup function to extract data for given sensor property type
-      //console.log(dataReceived);
       var dataViewFn = typeMap[dataType].fn.bind(dataReceived);
       // Read sensor ouput value - true => Little Endian
-      var unpackedValue = dataViewFn(packetPointer,true);
+      var unpackedValue = dataViewFn(packetPointer, true);
       // Push sensor reading onto data array
       sensor.data[columns[i]].push(unpackedValue);
       // Keep array at buffer size
-      if (sensor.data[columns[i]].length> maxRecords) {sensor.data[columns[i]].shift();}
+      if (sensor.data[columns[i]].length > maxRecords) { sensor.data[columns[i]].shift(); }
       // move pointer forward in data packet to next value
       packetPointer += typeMap[dataType].bytes;
       bytesReceived += typeMap[dataType].bytes;
       i++;
-      //console.log(sensor.data[columns[i]]);
     });
     sensor.rendered = false; // flag - vizualization needs to be updated
   }
 
   function onDisconnected(event) {
     let device = event.target;
-    bigButton.style.backgroundColor="red";
+    bigButton.style.backgroundColor = "red";
     // clear read polling
     for (const sensor of sensors) {
-      if(typeof BLEsense[sensor].polling !== 'undefined'){
+      if (typeof BLEsense[sensor].polling !== 'undefined') {
         clearInterval(BLEsense[sensor].polling);
       }
     }
@@ -231,148 +337,215 @@ async function connect() {
     msg('Device ' + device.name + ' is disconnected.');
   }
 
-  function BLEwriteTo(sensor){
+  function BLEwriteTo(sensor) {
     if (BLEsense[sensor].writeBusy) return; // dropping writes when one is in progress instead of queuing as LED is non-critical / realtime
     BLEsense[sensor].writeBusy = true; // Ensure no write happens when GATT operation in progress
     BLEsense[sensor].characteristic.writeValue(BLEsense[sensor].writeValue)
-    .then(_ => {
-      BLEsense[sensor].writeBusy = false;
-    })
-    .catch(error => {
-      console.log(error);
-    });
+      .then(_ => {
+        BLEsense[sensor].writeBusy = false;
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
 
-  </script>
-  <script>
+</script>
+<script>
 
-  
+  function initColorPicker() {
+    BLEsense.led.colorPicker = new iro.ColorPicker("#color-picker-container", {
+      width: 150,
+      color: "rgb(255, 0, 0)",
+      borderWidth: 1,
+      borderColor: "#fff",
+      sliderHeight: 6,
+      sliderMargin: 6
+    });
+    // RGB Color Picker
+    BLEsense.led.colorPicker.on('color:change', updateModelLed);
+    function updateModelLed(color) {
+      ledLight.color.setHex("0x" + color.hexString.substring(1, 7));
+      ledMaterial.color.set(color.hexString)   // where r, g, and b are 0 to 1
+      var rgb_values = Uint8Array.of(color.rgb.r, color.rgb.g, color.rgb.b);
+      console.log(rgb_values);
+      BLEsense['led'].writeValue = rgb_values;
+      BLEwriteTo('led');
+    }
+  }
+
   // Graphing
-  const colors = ["#FF355E","#FD5B20","#FF6037","#FF9966","#FF9933","#FFCC33","#FFFF66","#FFFF66","#CCFF00","#66FF66","#AAF0D1","#50BFE6","#FF6EFF","#EE34D2","#FF00CC","#FF00CC"];
+  const colors = ["#FF355E", "#FD5B20", "#FF6037", "#FF9966", "#FF9933", "#FFCC33", "#FFFF66", "#FFFF66", "#CCFF00", "#66FF66", "#AAF0D1", "#50BFE6", "#FF6EFF", "#EE34D2", "#FF00CC", "#FF00CC"];
   var colorIndex = 0;
-  function initGraph(sensor){
+  function initGraph(sensor) {
     var title = sensor;
-    var series = Object.keys(BLEsense[sensor].data["Gx"]);
+    var series = Object.keys(BLEsense[sensor].data);
     var format = [];
-    series.forEach(function(item){
+    series.forEach(function (item) {
       colorIndex++;
-      if (colorIndex>colors.length) {colorIndex=0;}
+      if (colorIndex > colors.length) { colorIndex = 0; }
       format.push({
         y: [],
         name: item,
         mode: 'lines',
         width: 1,
-        line: {width: 1,color: colors[colorIndex]}
+        line: { width: 1, color: colors[colorIndex] }
       });
     });
 
-    Plotly.plot(title,format,{
+    Plotly.plot(title, format, {
       plot_bgcolor: '#111111',
       paper_bgcolor: '#111111',
-      margin: {l:8,r:8,b:18,t:18},
+      margin: { l: 8, r: 8, b: 18, t: 18 },
       showlegend: false,
-      yaxis: {'showticklabels':false},
+      yaxis: { 'showticklabels': false },
       xaxis: {
-        'range': [0,maxRecords],
-      'showticklabels':false,
+        'range': [0, maxRecords],
+        'showticklabels': false,
         'autorange': false,
         'showgrid': true,
-  'zeroline': true,
-        tickfont: {size: 8}
+        'zeroline': true,
+        tickfont: { size: 8 }
       }
     }
-  );
-}
-
-function spectrumAnalyser(sensor){
-  const canvas = document.getElementById('mic');
-  const micctx = canvas.getContext('2d');
-  const bucketLabels = Object.keys(BLEsense[sensor].data);
-  const thickness = canvas.width / bucketLabels.length;
-  micctx.fillStyle = "#111111";
-  micctx.fillRect(0, 0, canvas.width, canvas.height); // mask bars beneath
-  for (i=0;i<bucketLabels.length;i++){
-    
-    var value = BLEsense[sensor].data[bucketLabels[i]].pop(); // display for latest record
-    micctx.clearRect(i*thickness, 128, thickness-1, -value);
+    );
   }
-  spectrogram(sensor);
-}
 
-function spectrogram(sensor){
-  const canvas = document.getElementById('spectrogram');
-  const ctx = canvas.getContext('2d');
-  const bucketLabels = Object.keys(BLEsense[sensor].data);
-  const records = BLEsense[sensor].data[bucketLabels[1]].length;
-  const vthickness = 128/maxRecords;
-  const thickness = canvas.width / bucketLabels.length;
-  ctx.fillStyle = "#111111";
-  ctx.fillRect(0, 0, 256, 256);
-  for (i=0;i<bucketLabels.length;i++){ // for each fft bucket
-    for (j=0;j<records;j++){ // for each record of that bucket
-      var value = ((BLEsense[sensor].data[bucketLabels[i]][j])/255);
-      var hue = (1 - value) * 240;
-      ctx.fillStyle = "hsl("+hue+",100%,50%)";
-      if (value<0.02) {ctx.fillStyle = "#111111";}
-      ctx.fillRect(i*thickness,j*vthickness, thickness-1,vthickness-1);}
+  // 3d model
+  var renderer = new THREE.WebGLRenderer();
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(75, 1, 1, 10000);
+
+  function init3D() {
+    var container = document.getElementById('3d');
+    var loader = new THREE.GLTFLoader();
+    scene.background = new THREE.Color(0x111111);
+    renderer.setSize(177, 177);
+    renderer.setPixelRatio(4);
+    container.appendChild(renderer.domElement);
+    loader.load('models/nano33ble.glb',
+      // called when the Arduinio model is loaded
+      function (gltf) {
+
+        // Model
+        arduinoModel = gltf.scene;
+        scene.add(arduinoModel);
+
+        // LED
+        var geometry = new THREE.BoxGeometry(1, 1, 1);
+        ledMaterial = new THREE.MeshBasicMaterial({ color: 0x111111 });
+        ledObject = new THREE.Mesh(geometry, ledMaterial);
+        ledObject.position.set(-4.5, 4, 0);
+        arduinoModel.add(ledObject);
+        ledLight = new THREE.PointLight(0x111111, 3, 100);
+        ledLight.position.set(-4.5, 4, -1);
+        arduinoModel.add(ledLight);
+        var sphereSize = 1;
+
+        // Light
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color, intensity);
+        light.position.set(-20, 100, 0);
+        light.target.position.set(0, 0, 0);
+        scene.add(light);
+        scene.add(light.target);
+        var hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 1000);
+        scene.add(hemiLight);
+
+        // Camera
+        camera.position.set(0, 40, 0);
+        camera.rotation.y = Math.PI; // 180
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        renderer.render(scene, camera);
+      }
+    );
+  }
+
+  function colorBars(sensor) {
+    // Color + light
+    const canvas = document.getElementById('colors');
+    const ctx = canvas.getContext('2d');
+    const thickness = canvas.width / maxRecords;
+    ctx.fillStyle = "#111111";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (i = 0; i < maxRecords; i++) {
+      R = BLEsense[sensor].data.R[i];
+      G = BLEsense[sensor].data.G[i];
+      B = BLEsense[sensor].data.B[i];
+      total = R + G + B;
+      R = R / total * 255; G = G / total * 255; B = B / total * 255;
+      ctx.fillStyle = "rgba(" + R + "," + G + "," + B + ")";
+      ctx.fillRect(i * thickness, 128, thickness - 1, -total / 5);
     }
   }
+  // return last item of array
+  Array.prototype.latest = function () { return this[this.length - 1]; };
 
-  function graph(sensor){
+  function graph(sensor) {
     var labels = Object.keys(BLEsense[sensor].data);
     var values = [];
     // after
-    labels.forEach(function(label){
-      var newVal = BLEsense[sensor].data[label];
-      console.log(newVal);
-      
+    labels.forEach(function (label) {
+      values.push(BLEsense[sensor].data[label]);
     });
-    values.push(55);
-    values.push(10);
-    values.push(80);
-//    console.log(values);
-    Plotly.restyle(sensor, {y: [sensor.data]});
-    
-    
-  }
-  gyroXlist = [];
-  function digit(sensor){
-    const value = BLEsense[sensor].data["Gx"].pop();
-    const div = document.getElementById(sensor+"-value");
-    BLEsense[sensor].data["Gx"].push(value);
-    if (!Number.isNaN(value)) {div.innerHTML = value;};
+    Plotly.restyle(sensor, { y: values });
   }
 
+  function digit(sensor) {
+    const value = BLEsense[sensor].data[sensor].latest();
+    const div = document.getElementById(sensor + "-value");
+    if (!Number.isNaN(value)) { div.innerHTML = Math.round(value * 10) / 10; };
+  }
 
-  function bytes(){
-    if (bytesReceived > bytesPrevious){
-      bytesPrevious= bytesReceived;
-      msg(bytesReceived+" bytes received");
+  function update3d(sensor) {
+    var Ax = BLEsense['accelerometer'].data.Ax.latest() * 0.0174533;
+    var Ay = BLEsense['accelerometer'].data.Ay.latest() * 0.0174533;
+    var Az = BLEsense['accelerometer'].data.Az.latest() * 0.0174533;
+    var pitch = Math.atan2((-Ax), Math.sqrt(Ay * Ay + Az * Az));
+    var roll = Math.atan2(Ay, Az);
+    arduinoModel.rotation.x = roll;
+    arduinoModel.rotation.y = pitch;
+    arduinoModel.rotation.z = 0;
+    renderer.render(scene, camera);
+  }
+
+  function bytes() {
+    if (bytesReceived > bytesPrevious) {
+      bytesPrevious = bytesReceived;
+      msg(bytesReceived + " bytes received");
     }
   }
 
   var skip_frame = false;
-  function draw(){
-    function updateViz(sensor,fns){
+  function draw() {
+    function updateViz(sensor, fns) {
       if (BLEsense[sensor].rendered == false) { // only render if new values are received
-        fns.forEach(function(fn){
+        fns.forEach(function (fn) {
           fn(sensor);
         });
         BLEsense[sensor].rendered = true;
       }
     }
-    if (skip_frame == false){ // TODO update with fuction to iterate object with viz function as a property
-      updateViz('gyroX', [graph,digit]);
-      //bytes();
+    if (skip_frame == false) { // TODO update with fuction to iterate object with viz function as a property
+      updateViz('accelerometer', [graph, update3d]);
+      updateViz('gyroscope', [graph]);
+      updateViz('temperature', [digit, graph]);
+      updateViz('humidity', [digit, graph]);
+      updateViz('pressure', [digit, graph]);
+      bytes();
 
       skip_frame = true; // render alternate frames = 30fps
-    } else {skip_frame=false;}
+    } else { skip_frame = false; }
     requestAnimationFrame(draw);
   }
 
-  initGraph('gyroX');
-  //initSpectrum();
-  //init3D();
+  initGraph('gyroscope');
+  initGraph('accelerometer');
+  initGraph('temperature');
+  initGraph('humidity');
+  initGraph('pressure');
+  init3D();
   requestAnimationFrame(draw);
-  </script>
-  </html>
+</script>
+
+</html>
