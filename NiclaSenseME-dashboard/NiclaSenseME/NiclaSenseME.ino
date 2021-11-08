@@ -18,9 +18,8 @@ Web dashboard by D Pajak
 Device sketch based on example by Sandeep Mistry
 
 */
-
+#include "Nicla_System.h"
 #include "Arduino_BHY2.h"
-
 #include <ArduinoBLE.h>
 
 #define BLE_SENSE_UUID(val) ("6fbe1da7-" val "-44de-92c4-bb6e04fb0212")
@@ -29,7 +28,14 @@ const int VERSION = 0x00000000;
 
 BLEService service(BLE_SENSE_UUID("0000"));
 BLEUnsignedIntCharacteristic versionCharacteristic(BLE_SENSE_UUID("1001"), BLERead);
-BLEShortCharacteristic gyroX(BLE_SENSE_UUID("2001"), BLERead); // 16-bit
+BLEFloatCharacteristic temperatureCharacteristic(BLE_SENSE_UUID("2001"), BLERead);
+BLEUnsignedIntCharacteristic humidityCharacteristic(BLE_SENSE_UUID("3001"), BLERead);
+BLEUnsignedIntCharacteristic pressureCharacteristic(BLE_SENSE_UUID("4001"), BLERead);
+
+BLECharacteristic accelerometerCharacteristic(BLE_SENSE_UUID("5001"), BLERead | BLENotify, 3 * sizeof(float)); // Array of 3 bytes, RGB
+BLECharacteristic gyroscopeCharacteristic(BLE_SENSE_UUID("6001"), BLERead | BLENotify, 3 * sizeof(int16_t));   // Array of 3 bytes, RGB
+
+BLECharacteristic rgbLedCharacteristic(BLE_SENSE_UUID("7001"), BLERead | BLEWrite, 3 * sizeof(byte)); // Array of 3 bytes, RGB
 
 // String to calculate the local and device name
 String name;
@@ -40,7 +46,11 @@ String name;
 // number of samples read
 //volatile int samplesRead;
 
-SensorXYZ gyro(SENSOR_ID_GYRO);
+Sensor temperature(SENSOR_ID_TEMP);
+Sensor humidity(SENSOR_ID_HUM);
+Sensor pressure(SENSOR_ID_BARO);
+SensorXYZ gyroscope(SENSOR_ID_GYRO);
+SensorXYZ accelerometer(SENSOR_ID_ACC);
 
 void setup()
 {
@@ -49,8 +59,15 @@ void setup()
   // while (!Serial);
   Serial.println("Started");
 
+  nicla::begin();
+  nicla::leds.begin();
+  nicla::leds.setColor(green);
   BHY2.begin();
-  gyro.begin();
+  temperature.begin();
+  humidity.begin();
+  pressure.begin();
+  gyroscope.begin();
+  accelerometer.begin();
 
   if (!BLE.begin())
   {
@@ -80,13 +97,47 @@ void setup()
   BLE.setDeviceName(name.c_str());
   BLE.setAdvertisedService(service);
 
+  service.addCharacteristic(temperatureCharacteristic);
+  service.addCharacteristic(humidityCharacteristic);
+  service.addCharacteristic(pressureCharacteristic);
   service.addCharacteristic(versionCharacteristic);
-  service.addCharacteristic(gyroX);
+  service.addCharacteristic(accelerometerCharacteristic);
+  service.addCharacteristic(gyroscopeCharacteristic);
+  service.addCharacteristic(rgbLedCharacteristic);
+
+  temperatureCharacteristic.setEventHandler(BLERead, onTemperatureCharacteristicRead);
+  humidityCharacteristic.setEventHandler(BLERead, onHumidityCharacteristicRead);
+  pressureCharacteristic.setEventHandler(BLERead, onPressureCharacteristicRead);
+
+  rgbLedCharacteristic.setEventHandler(BLEWritten, onRgbLedCharacteristicWrite);
+
+  /*
+  service.addCharacteristic(gyroscopeCharacteristicX);
+  service.addCharacteristic(gyroscopeCharacteristicY);
+  service.addCharacteristic(gyroscopeCharacteristicZ);
+  
+  service.addCharacteristic(accelerometerCharacteristicX);
+  service.addCharacteristic(accelerometerCharacteristicY);
+  service.addCharacteristic(accelerometerCharacteristicZ);*/
+
+  /*service.addCharacteristic(accelX);
+  service.addCharacteristic(accelY);
+  service.addCharacteristic(accel);*/
+
+  //service.addCharacteristic(gyroscopeCharacteristic);
 
   versionCharacteristic.setValue(VERSION);
 
-  gyroX.setEventHandler(BLERead, onGyroXRead);
-  //gyroX.setValue(55);
+  /*
+  gyroscopeCharacteristicX.setEventHandler(BLERead, ongyroscopeCharacteristicXRead);
+  gyroscopeCharacteristicY.setEventHandler(BLERead, ongyroscopeCharacteristicYRead);
+  gyroscopeCharacteristicZ.setEventHandler(BLERead, ongyroscopeCharacteristicZRead);
+
+  accelerometerCharacteristicX.setEventHandler(BLERead, onAccelerometerCharacteristicXRead);
+  accelerometerCharacteristicY.setEventHandler(BLERead, onAccelerometerCharacteristicYRead);
+  accelerometerCharacteristicZ.setEventHandler(BLERead, onAccelerometerCharacteristicZRead);
+  */
+  //gyroscopeCharacteristicX.setValue(55);
 
   BLE.addService(service);
 
@@ -95,19 +146,110 @@ void setup()
 
 void loop()
 {
-  int16_t x = 0;
 
-  Serial.println(x);
   while (BLE.connected())
   {
     BHY2.update(100);
+    if (gyroscopeCharacteristic.subscribed())
+    {
+      float x, y, z;
+
+      x = gyroscope.x();
+      y = gyroscope.y();
+      z = gyroscope.z();
+
+      float gyroscopeValues[3] = {x, y, z};
+
+      gyroscopeCharacteristic.writeValue(gyroscopeValues, sizeof(gyroscopeValues));
+    }
+    if (accelerometerCharacteristic.subscribed())
+    {
+      float x, y, z;
+      x = accelerometer.x();
+      y = accelerometer.y();
+      z = accelerometer.z();
+
+      float accelerometerValues[] = {x, y, z};
+      accelerometerCharacteristic.writeValue(accelerometerValues, sizeof(accelerometerValues));
+    }
   }
 }
+/*
+void ongyroscopeCharacteristicRead(BLEDevice central, BLECharacteristic a){
+  int16_t myArray[] = {1,2,3};
 
-void onGyroXRead(BLEDevice central, BLECharacteristic characteristic)
+  gyroscopeCharacteristic.writeValue(myArray, sizeof(myArray));
+}*/
+/*
+void ongyroscopeCharacteristicXRead(BLEDevice central, BLECharacteristic characteristic)
 {
   BHY2.update(1);
-  int16_t x = gyro.x();
+  int16_t x = gyroscope.x();
   Serial.println(x);
-  gyroX.writeValue((int16_t)x);
+  gyroscopeCharacteristicX.writeValue((int16_t)x);
+}
+
+void ongyroscopeCharacteristicYRead(BLEDevice central, BLECharacteristic characteristic)
+{
+  BHY2.update(1);
+  int16_t y = gyroscope.y();
+  Serial.println(y);
+  gyroscopeCharacteristicY.writeValue((int16_t)y);
+}
+
+void ongyroscopeCharacteristicZRead(BLEDevice central, BLECharacteristic characteristic)
+{
+  BHY2.update(1);
+  int16_t z = gyroscope.z();
+  Serial.println(z);
+  gyroscopeCharacteristicZ.writeValue((int16_t)z);
+}
+
+
+void onAccelerometerCharacteristicXRead(BLEDevice central, BLECharacteristic characteristic)
+{
+  BHY2.update(1);
+  int16_t x = accelerometer.x();
+  
+  accelerometerCharacteristicX.writeValue((int16_t)x);
+}
+void onAccelerometerCharacteristicYRead(BLEDevice central, BLECharacteristic characteristic)
+{
+  BHY2.update(1);
+  int16_t y = accelerometer.y();
+  
+  accelerometerCharacteristicX.writeValue((int16_t)y);
+}
+void onAccelerometerCharacteristicZRead(BLEDevice central, BLECharacteristic characteristic)
+{
+  BHY2.update(1);
+  int16_t z = accelerometer.z();
+  
+  accelerometerCharacteristicX.writeValue((int16_t)z);
+}
+*/
+
+void onTemperatureCharacteristicRead(BLEDevice central, BLECharacteristic characteristic)
+{
+  float temperatureValue = temperature.value();
+  temperatureCharacteristic.writeValue(temperatureValue);
+}
+void onHumidityCharacteristicRead(BLEDevice central, BLECharacteristic characteristic)
+{
+  uint8_t humidityValue = humidity.value();
+  humidityCharacteristic.writeValue(humidityValue);
+}
+void onPressureCharacteristicRead(BLEDevice central, BLECharacteristic characteristic)
+{
+  uint8_t pressureValue = pressure.value();
+  pressureCharacteristic.writeValue(pressureValue);
+}
+
+void onRgbLedCharacteristicWrite(BLEDevice central, BLECharacteristic characteristic)
+{
+  byte r = rgbLedCharacteristic[0];
+  byte g = rgbLedCharacteristic[1];
+  byte b = rgbLedCharacteristic[2];
+
+  nicla::leds.setColor(b, g, r);
 }
