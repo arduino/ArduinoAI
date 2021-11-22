@@ -422,10 +422,10 @@
     renderer.setSize(177, 177);
     renderer.setPixelRatio(4);
     container.appendChild(renderer.domElement);
-    loader.load('models/nano33ble.glb',
+    loader.load('models/niclaSenseME.glb',
       // called when the Arduinio model is loaded
       function (gltf) {
-
+        console.log("success")
         // Model
         arduinoModel = gltf.scene;
         scene.add(arduinoModel);
@@ -532,7 +532,7 @@
       updateViz('temperature', [digit, graph]);
       updateViz('humidity', [digit, graph]);
       updateViz('pressure', [digit, graph]);
-      bytes();
+      //bytes();
 
       skip_frame = true; // render alternate frames = 30fps
     } else { skip_frame = false; }
