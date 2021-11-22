@@ -1,5 +1,5 @@
-# BLESense Demo Dashboard
+# Nicla Sense ME Web-BLE Demo Dashboard
 
-(c) 2019 Arduino SA
+(c) 2021 Arduino SA
 License GPL
 
