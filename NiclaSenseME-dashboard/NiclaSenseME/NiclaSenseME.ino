@@ -1,6 +1,6 @@
 /*
 
-Arduino Nicla Sense ME BLE Sense dashboard demo
+Arduino Nicla Sense ME WEB BLE Sense dashboard demo
 
 
 Hardware required: https://store.arduino.cc/nicla-sense-me
@@ -8,15 +8,15 @@ Hardware required: https://store.arduino.cc/nicla-sense-me
 1) Upload this sketch to the Arduino Nano BLE sense board
 
 2) Open the following web page in the Chrome browser:
-https://arduino.github.io/ArduinoAI/BLESense-test-dashboard/
+https://arduino.github.io/ArduinoAI/NiclaSenseME-dashboard/
 
 3) Click on the green button in the web page to connect the browser to the board over BLE
 
 
 Web dashboard by D Pajak
 
-Device sketch based on example by Sandeep Mistry
-Sketch fixed to be used with the Nicla Sense ME by Pablo Marquínez
+Device sketch based on example by Sandeep Mistry and Massimo Banzi
+Sketch and dashboard copy fixed to be used with the Nicla Sense ME by Pablo Marquínez
 
 */
 #include "Nicla_System.h"
@@ -28,6 +28,7 @@ Sketch fixed to be used with the Nicla Sense ME by Pablo Marquínez
 const int VERSION = 0x00000000;
 
 BLEService service(BLE_SENSE_UUID("0000"));
+
 BLEUnsignedIntCharacteristic versionCharacteristic(BLE_SENSE_UUID("1001"), BLERead);
 BLEFloatCharacteristic temperatureCharacteristic(BLE_SENSE_UUID("2001"), BLERead);
 BLEUnsignedIntCharacteristic humidityCharacteristic(BLE_SENSE_UUID("3001"), BLERead);
@@ -47,8 +48,7 @@ Sensor pressure(SENSOR_ID_BARO);
 SensorXYZ gyroscope(SENSOR_ID_GYRO);
 SensorXYZ accelerometer(SENSOR_ID_ACC);
 
-void setup()
-{
+void setup(){
   Serial.begin(115200);
 
   // while (!Serial);
@@ -64,8 +64,7 @@ void setup()
   gyroscope.begin();
   accelerometer.begin();
 
-  if (!BLE.begin())
-  {
+  if (!BLE.begin()){
     Serial.println("Failled to initialized BLE!");
 
     while (1)
@@ -113,14 +112,11 @@ void setup()
   BLE.advertise();
 }
 
-void loop()
-{
-
-  while (BLE.connected())
-  {
+void loop(){
+  while (BLE.connected()){
     BHY2.update(100);
-    if (gyroscopeCharacteristic.subscribed())
-    {
+
+    if (gyroscopeCharacteristic.subscribed()){
       float x, y, z;
 
       x = gyroscope.x();
@@ -131,8 +127,8 @@ void loop()
 
       gyroscopeCharacteristic.writeValue(gyroscopeValues, sizeof(gyroscopeValues));
     }
-    if (accelerometerCharacteristic.subscribed())
-    {
+
+    if (accelerometerCharacteristic.subscribed()){
       float x, y, z;
       x = accelerometer.x();
       y = accelerometer.y();
@@ -144,24 +140,22 @@ void loop()
   }
 }
 
-void onTemperatureCharacteristicRead(BLEDevice central, BLECharacteristic characteristic)
-{
+void onTemperatureCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
   float temperatureValue = temperature.value();
   temperatureCharacteristic.writeValue(temperatureValue);
 }
-void onHumidityCharacteristicRead(BLEDevice central, BLECharacteristic characteristic)
-{
+
+void onHumidityCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
   uint8_t humidityValue = humidity.value();
   humidityCharacteristic.writeValue(humidityValue);
 }
-void onPressureCharacteristicRead(BLEDevice central, BLECharacteristic characteristic)
-{
+
+void onPressureCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
   uint8_t pressureValue = pressure.value();
   pressureCharacteristic.writeValue(pressureValue);
 }
 
-void onRgbLedCharacteristicWrite(BLEDevice central, BLECharacteristic characteristic)
-{
+void onRgbLedCharacteristicWrite(BLEDevice central, BLECharacteristic characteristic){
   byte r = rgbLedCharacteristic[0];
   byte g = rgbLedCharacteristic[1];
   byte b = rgbLedCharacteristic[2];
