@@ -367,7 +367,6 @@
       ledLight.color.setHex("0x" + color.hexString.substring(1, 7));
       ledMaterial.color.set(color.hexString)   // where r, g, and b are 0 to 1
       var rgb_values = Uint8Array.of(color.rgb.r, color.rgb.g, color.rgb.b);
-      console.log(rgb_values);
       BLEsense['led'].writeValue = rgb_values;
       BLEwriteTo('led');
     }
@@ -425,7 +424,6 @@
     loader.load('models/niclaSenseME.glb',
       // called when the Arduinio model is loaded
       function (gltf) {
-        console.log("success")
         // Model
         arduinoModel = gltf.scene;
         scene.add(arduinoModel);
