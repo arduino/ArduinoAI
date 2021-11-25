@@ -9,6 +9,7 @@ This is a temporary website linking some of the demos and tools we build to supp
 
 [Fruit identification using Arduino and TensorFlow](https://blog.arduino.cc/2019/11/07/fruit-identification-using-arduino-and-tensorflow/)
 
+[Use the dashboard using the Arduino Nicla Sense ME](http://docs.arduino.cc/tutorials/nicla-sense-me/web-ble-dashboard)
 
 ## BLE Sense Demo Dashboard
 
