@@ -3,33 +3,41 @@
 
 <head>
   <title>Arduino Nicla Sense ME - Web BLE test</title>
-  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <link href='https://fonts.googleapis.com/css?family=Roboto Mono' rel='stylesheet'>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@jaames/iro/dist/iro.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js"></script>
   <script src="GLTFLoader.js"></script>
   <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      color: #888888;
-      background: #000000;
-      font-size: small;
+    * {
+      font-family: 'Roboto Mono', sans-serif;
     }
 
-    #bigButton {
-      background-color: aqua;
+    body {
+      color: white;
+      background: #000000;
+      font-size: 14px;
+    }
+
+    #pairButton {
+      background-color: #d8f41d;
       border: none;
       color: black;
       padding: 1px;
       text-align: center;
       text-decoration: none;
-      font-size: 6px;
-      margin: 12px 20px;
-      height: 15px;
-      width: 30px;
+
+      margin: 8px 18px;
+      height: 25px;
+      width: 100px;
       border-radius: 10%;
       outline: none;
-      font-family: 'Roboto', sans-serif;
+
+      border-radius: 20px;
+      grid-column: 1;
+
+      cursor: pointer;
     }
 
     .container {
@@ -41,50 +49,71 @@
     }
 
     .widget {
-      background: #111111;
+      background-color: #111111;
       border: 1px solid #000000;
       border-radius: 0px;
       padding: 12px;
       margin: 6px;
       float: left;
+      color: #DAE3E3;
+      padding-bottom: 16px;
+
+    }
+
+    a {
+      color: white;
+      font-weight: bold;
     }
 
     .status {
-      background-image: url("logo.png");
-      background-size: 80px;
-      background-position: 98% 50%;
-      background-repeat: no-repeat;
+      margin-top: 1%;
       width: 885px;
       height: 42px;
       color: white;
+      display: grid;
+      grid-template-columns: 15% 70% 15%;
+    }
+
+    #bluetooth {
+      font-size: 16px;
+      height: 50%;
+      margin: auto;
     }
 
     .square {
       width: 192px;
-      height: 192px;
+      height: 226px;
       position: relative;
     }
 
     .label {
       height: 15px;
       display: inline;
-      font-size: 15px;
+      font-size: 12px;
+
+    }
+
+    .statusBar {
+      height: 100%;
+      grid-column: 2;
+      vertical-align: middle;
+      text-align: center;
     }
 
     .digit {
-      font-size: 30px;
+      font-size: 20px;
       color: #888888;
       float: right;
     }
 
     .short {
       width: 192px;
-      height: 96px;
+      height: 92px;
     }
 
     .double {
       width: 423px;
-      height: 192px;
+      height: 226px;
     }
 
     .graph {
@@ -102,10 +131,75 @@
       height: 81px;
     }
 
+    .quaternion {
+      font-size: 10px;
+    }
+
     #color-picker-container {
       display: flex;
       align-items: center;
       justify-content: center;
+      height: 100%;
+      margin: auto;
+    }
+
+    #snackbar {
+      height: 23px;
+      display: block;
+      visibility: visible;
+      text-align: center;
+      background-color: #374146;
+      border-radius: 3px;
+      padding: 4px 13px 4px 13px;
+      margin: 16px 7px 7px;
+
+      display: inline-block;
+
+    }
+
+    #canvasDigits {
+      width: 75%;
+      margin: auto;
+    }
+
+    #canvasDigits span {
+      width: 29%;
+      display: inline-block;
+    }
+
+    #snackbar.show {
+
+      -webkit-animation: fadein 0.5s, 0.1s;
+      animation: fadein 0.5s, 0.1s;
+    }
+
+
+    @-webkit-keyframes fadein {
+      from {
+        visibility: hidden;
+
+        opacity: 0;
+      }
+
+      to {
+        visibility: visible;
+
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadein {
+      from {
+        visibility: hidden;
+
+        opacity: 0;
+      }
+
+      to {
+        visibility: visible;
+
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -113,18 +207,22 @@
 <body>
 
   <div class="container">
-    <div class="label">&nbsp;&nbsp;IMPORTANT - first upload <a
-        href="https://create.arduino.cc/editor/pmarquinez/b0102b0a-1d8b-4b4a-a53d-781b896d87f7/preview">sketch</a> to
-      Arduino Nicla Sense ME<br></div>
+
+    <div id="snackbar"></div>
     <div class="status widget">
-      <button id="bigButton"></button>
-      <div class="label" id="bluetooth">Click button to connect to the board</div>
+      <button id="pairButton">PAIR NICLA</button>
+      <div class="label statusBar" id="bluetooth">Click the pair button to connect your device</div>
+      <img src="Logo-Arduino-Pro-inline.svg" style="position: inherit;padding-right: 0px;filter: invert(100%);float: right; grid-column: 3; width: 80%; margin-top: 8.5%;" />
     </div>
 
     <div class="square widget" id="3d">
-      <div class="label">&#128230;3D</div>
+      <div class="label">&#128230; Quaternion Rotation</div>
+      <div class="quaternion" id="canvasDigits">
+        <span id="xQuaternion">x: -</span>
+        <span id="yQuaternion">y: -</span>
+        <span id="zQuaternion">z: -</span>
+      </div>
     </div>
-
 
     <div class="double widget">
       <div class="label">&#128640; Accelerometer</div>
@@ -163,11 +261,34 @@
       <div class="label">kPa</div>
       <div class="shortgraph" id="pressure"></div>
     </div>
+
+    <div class="short widget">
+      <div class="label">&#x1FA91; Indoor Air Quality</div>
+      <div class="label" id="bsec-value"></div>
+      <div class="label"></div>
+      <div class="shortgraph" id="bsec"></div>
+    </div>
+
+    <div class="short widget">
+      <div class="label">&#x1F4A8; Co2 Value</div>
+      <div class="label" id="co2-value"></div>
+      <div class="label"></div>
+      <div class="shortgraph" id="co2"></div>
+    </div>
+
+    <div class="short widget">
+      <div class="label">&#x1F4A8; Gas Value</div>
+      <div class="label" id="gas-value"></div>
+      <div class="label"></div>
+      <div class="shortgraph" id="gas"></div>
+    </div>
+
   </div>
 </body>
+
 <script type="text/javascript">
   /*
-  Demo showing simple dashboard of Arduino BLE sense
+  Demo showing simple dashboard of Arduino Nicla Sense ME (from the BLE Sense version)
   
   Based on: https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web
   For earlier versions of Windows and Linux, you still have to go to chrome://flags/#enable-experimental-web-platform-features,
@@ -178,8 +299,6 @@
 
   var BLEsense =
   {
-
-    //Could not haave more than a value per characteristic due to error: InvalidModificationError: GATT Error: invalid attribute length.
     temperature:
     {
       uuid: '6fbe1da7-2001-44de-92c4-bb6e04fb0212',
@@ -216,15 +335,43 @@
       data: { 'x': [], 'y': [], 'z': [] }
     },
     led: {
-      uuid: '6fbe1da7-7001-44de-92c4-bb6e04fb0212',
+      uuid: '6fbe1da7-8001-44de-92c4-bb6e04fb0212',
       properties: ['BLEWrite'],
       structure: ['Uint8', 'Uint8', 'Uint8'],
       data: { 'R': [], 'G': [], 'B': [] },
       writeBusy: false, // we need to track this to avoid 'GATT operation in progress' errors
       writeValue: null
+    },
+    quaternion: {
+      uuid: '6fbe1da7-7001-44de-92c4-bb6e04fb0212',
+      properties: ['BLENotify'],
+      structure: ['Float32', 'Float32', 'Float32', 'Float32'],
+      data: { 'x': [], 'y': [], 'z': [], 'w': [] },
+      writeBusy: false, // we need to track this to avoid 'GATT operation in progress' errors
+      writeValue: null
+    },
+    bsec:
+    {
+      uuid: '6fbe1da7-9001-44de-92c4-bb6e04fb0212',
+      properties: ['BLERead'],
+      structure: ['Float32'],
+      data: { 'bsec': [] }
+    },
+    co2:
+    {
+      uuid: '6fbe1da7-9002-44de-92c4-bb6e04fb0212',
+      properties: ['BLERead'],
+      structure: ['Uint32'],
+      data: { 'co2': [] }
+    },
+    gas:
+    {
+      uuid: '6fbe1da7-9003-44de-92c4-bb6e04fb0212',
+      properties: ['BLERead'],
+      structure: ['Uint8'],
+      data: { 'gas': [] }
     }
   }
-
 
   const sensors = Object.keys(BLEsense);
   const SERVICE_UUID = '6fbe1da7-0000-44de-92c4-bb6e04fb0212';
@@ -232,25 +379,47 @@
   var bytesPrevious = 0;
 
   // UI elements
-  const bigButton = document.getElementById('bigButton');
+  const pairButton = document.getElementById('pairButton');
   const BLEstatus = document.getElementById('bluetooth');
 
+  snack('IMPORTANT - first upload the sketch to your Arduino Nicla Sense ME &nbsp;&nbsp; <a href="https://create.arduino.cc/editor/pmarquinez/b0102b0a-1d8b-4b4a-a53d-781b896d87f7/preview">OPEN</a>', 1)
+  
   if ("bluetooth" in navigator) {
-    bigButton.addEventListener('click', function (event) {
+    pairButton.addEventListener('click', function (event) {
       connect();
     });
     // else the browser doesn't support bluetooth
   } else {
-    msg("browser not supported"); bigButton.style.backgroundColor = "red";
-    alert("Error: This browser doesn't support Web Bluetooth. Try using Chrome.");
+    msg("browser not supported"); /*pairButton.style.backgroundColor = "red";*/
+    snack("Error: This browser doesn't support Web Bluetooth. Try using Chrome.", 1);
   }
 
+  // Top middle information label
   function msg(m) {
     BLEstatus.innerHTML = m;
   }
 
+  //Top left pop up messaage
+  function snack(m, warningLevel) {
+    snackBar = document.getElementById("snackbar");
+    snackBar.style.visibility = "visible";
+    snackBar.className = "show";
+
+    var warnEmoji = warningLevel ? '&#x26A0  ' : '&#10004  ';
+
+    setTimeout(function () { snackBar.className = snackBar.className.replace("show", ""); }, 501);
+    snackBar.innerHTML = warnEmoji + m + ' <span onClick=hideSnack() style="cursor:pointer; margin-left: 15px"> ✖ </span> ';
+  }
+
+  function hideSnack() {
+    snackBar = document.getElementById("snackbar");
+    snackBar.style.visibility = "hidden";
+  }
+
   async function connect() {
-    bigButton.style.backgroundColor = "grey";
+    pairButton.style.backgroundColor = "grey";
+    pairButton.style.color = 'black';
+    pairButton.innerHTML = "PAIRING";
     msg('requesting device ...');
 
     const device = await navigator.bluetooth.requestDevice({
@@ -287,8 +456,11 @@
 
       BLEsense[sensor].rendered = false;
     }
-    bigButton.style.backgroundColor = 'green';
-    msg('connected.');
+    pairButton.style.backgroundColor = 'green';
+    pairButton.style.color = 'white';
+    pairButton.innerHTML = "PAIRED";
+    msg('Characteristics configured');
+    snack('Connected.', 0);
 
     initColorPicker();
   }
@@ -298,6 +470,7 @@
     const typeMap = {
       "Uint8": { fn: DataView.prototype.getUint8, bytes: 1 },
       "Uint16": { fn: DataView.prototype.getUint16, bytes: 2 },
+      "Uint32": { fn: DataView.prototype.getUint32, bytes: 4 },
       "Int16": { fn: DataView.prototype.getInt16, bytes: 2 },
       "Float32": { fn: DataView.prototype.getFloat32, bytes: 4 }
     };
@@ -323,7 +496,9 @@
 
   function onDisconnected(event) {
     let device = event.target;
-    bigButton.style.backgroundColor = "red";
+    pairButton.style.backgroundColor = "red";
+    pairButton.innerHTML = "PAIR NICLA";
+    snack("Device disconnected, please retry", 1)
     // clear read polling
     for (const sensor of sensors) {
       if (typeof BLEsense[sensor].polling !== 'undefined') {
@@ -334,7 +509,8 @@
     const colorPickerElement = document.getElementById("color-picker-container");
     colorPickerElement.removeChild(colorPickerElement.firstChild);
 
-    msg('Device ' + device.name + ' is disconnected.');
+    snack('Device ' + device.name + ' has been disconnected.', 1);
+    msg("Disconnected");
   }
 
   function BLEwriteTo(sensor) {
@@ -350,6 +526,7 @@
   }
 
 </script>
+
 <script>
 
   function initColorPicker() {
@@ -417,10 +594,14 @@
   function init3D() {
     var container = document.getElementById('3d');
     var loader = new THREE.GLTFLoader();
+    var canvasDigits = document.getElementById('canvasDigits');
     scene.background = new THREE.Color(0x111111);
     renderer.setSize(177, 177);
+
     renderer.setPixelRatio(4);
-    container.appendChild(renderer.domElement);
+
+    container.insertBefore(renderer.domElement, canvasDigits);
+    renderer.domElement.style.margin = "9px";
     loader.load('models/niclaSenseME.glb',
       // called when the Arduinio model is loaded
       function (gltf) {
@@ -496,15 +677,26 @@
   }
 
   function update3d(sensor) {
-    var Ax = BLEsense['accelerometer'].data.Ax.latest() * 0.0174533;
-    var Ay = BLEsense['accelerometer'].data.Ay.latest() * 0.0174533;
-    var Az = BLEsense['accelerometer'].data.Az.latest() * 0.0174533;
-    var pitch = Math.atan2((-Ax), Math.sqrt(Ay * Ay + Az * Az));
-    var roll = Math.atan2(Ay, Az);
-    arduinoModel.rotation.x = roll;
-    arduinoModel.rotation.y = pitch;
-    arduinoModel.rotation.z = 0;
+  
+    // Get the quaternion values
+    var x = BLEsense['quaternion'].data.x.latest();
+    var y = BLEsense['quaternion'].data.y.latest();
+    var z = BLEsense['quaternion'].data.z.latest();
+    var w = BLEsense['quaternion'].data.w.latest();
+
+    // Construct the quaternion object with the values and apply that to the 3D model
+    const quaternion = new THREE.Quaternion(x, y, z, w);
+    quaternion.normalize();
+    arduinoModel.setRotationFromQuaternion(quaternion);
+
     renderer.render(scene, camera);
+
+    // Euler conversion, show the degrees below the 3D model
+    var rotation = new THREE.Euler().setFromQuaternion(quaternion, 'XYZ');
+
+    document.getElementById('xQuaternion').innerHTML = "x: " + Math.round(rotation.x * 180 / Math.PI + 180);
+    document.getElementById('yQuaternion').innerHTML = "y: " + Math.round(rotation.y * 180 / Math.PI + 180);
+    document.getElementById('zQuaternion').innerHTML = "z: " + Math.round(rotation.z * 180 / Math.PI + 180);
   }
 
   function bytes() {
@@ -525,12 +717,17 @@
       }
     }
     if (skip_frame == false) { // TODO update with fuction to iterate object with viz function as a property
-      updateViz('accelerometer', [graph, update3d]);
+      updateViz('accelerometer', [graph]);
       updateViz('gyroscope', [graph]);
       updateViz('temperature', [digit, graph]);
       updateViz('humidity', [digit, graph]);
       updateViz('pressure', [digit, graph]);
-      //bytes();
+      updateViz('bsec', [digit, graph]);
+      updateViz('co2', [digit, graph]);
+      updateViz('gas', [digit, graph]);
+      updateViz('quaternion', [update3d]);
+
+      //bytes();  //Get the total amount of bytes received
 
       skip_frame = true; // render alternate frames = 30fps
     } else { skip_frame = false; }
@@ -542,8 +739,13 @@
   initGraph('temperature');
   initGraph('humidity');
   initGraph('pressure');
+  initGraph('bsec');
+  initGraph('co2');
+  initGraph('gas');
+
   init3D();
   requestAnimationFrame(draw);
+
 </script>
 
 </html>
