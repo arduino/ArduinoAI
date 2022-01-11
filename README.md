@@ -19,6 +19,6 @@ This is a temporary website linking some of the demos and tools we build to supp
 
 ## Nicla Sense ME Demo Dashboard
 
-[Nicla Sense ME BLE Demo - Arduino sketch](https://create.arduino.cc/editor/pmarquinez/b0102b0a-1d8b-4b4a-a53d-781b896d87f7/preview)
+[Nicla Sense ME BLE Demo - Arduino sketch](https://create.arduino.cc/editor/FT-CONTENT/333e2e07-ecc4-414c-bf08-005b611ddd75/preview)
 
 [Nicla Sense ME BLE - Web Dashboard](https://arduino.github.io/ArduinoAI/NiclaSenseME-dashboard) (Chrome only)
