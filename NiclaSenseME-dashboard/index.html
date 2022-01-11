@@ -615,6 +615,7 @@
         ledObject = new THREE.Mesh(geometry, ledMaterial);
         ledObject.position.set(-4.5, 4, 0);
         arduinoModel.add(ledObject);
+        arduinoModel.rotation.x = 270 * (Math.PI/180);  // Show the Top side of the board by default
         ledLight = new THREE.PointLight(0x111111, 3, 100);
         ledLight.position.set(-4.5, 4, -1);
         arduinoModel.add(ledLight);
