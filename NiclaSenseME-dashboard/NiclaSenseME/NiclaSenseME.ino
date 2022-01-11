@@ -16,9 +16,10 @@ https://arduino.github.io/ArduinoAI/NiclaSenseME-dashboard/
 Web dashboard by D Pajak
 
 Device sketch based on example by Sandeep Mistry and Massimo Banzi
-Sketch and dashboard copy fixed to be used with the Nicla Sense ME by Pablo Marquínez
+Sketch and web dashboard copy-fixed to be used with the Nicla Sense ME by Pablo Marquínez
 
 */
+
 #include "Nicla_System.h"
 #include "Arduino_BHY2.h"
 #include <ArduinoBLE.h>
