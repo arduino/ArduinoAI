@@ -301,41 +301,41 @@
   {
     temperature:
     {
-      uuid: '6fbe1da7-2001-44de-92c4-bb6e04fb0212',
+      uuid: '19b10000-2001-537e-4f6c-d104768a1214',
       properties: ['BLERead'],
       structure: ['Float32'],
       data: { temperature: [] }
     },
     humidity:
     {
-      uuid: '6fbe1da7-3001-44de-92c4-bb6e04fb0212',
+      uuid: '19b10000-3001-537e-4f6c-d104768a1214',
       properties: ['BLERead'],
       structure: ['Uint8'],
       data: { humidity: [] }
     },
     pressure:
     {
-      uuid: '6fbe1da7-4001-44de-92c4-bb6e04fb0212',
+      uuid: '19b10000-4001-537e-4f6c-d104768a1214',
       properties: ['BLERead'],
       structure: ['Uint8'],
       data: { pressure: [] }
     },
     accelerometer:
     {
-      uuid: '6fbe1da7-5001-44de-92c4-bb6e04fb0212',
+      uuid: '19b10000-5001-537e-4f6c-d104768a1214',
       properties: ['BLENotify'],
       structure: ['Float32', 'Float32', 'Float32'],
       data: { 'Ax': [], 'Ay': [], 'Az': [] }
     },
     gyroscope:
     {
-      uuid: '6fbe1da7-6001-44de-92c4-bb6e04fb0212',
+      uuid: '19b10000-6001-537e-4f6c-d104768a1214',
       properties: ['BLENotify'],
       structure: ['Int16', 'Int16', 'Int16'],
       data: { 'x': [], 'y': [], 'z': [] }
     },
     led: {
-      uuid: '6fbe1da7-8001-44de-92c4-bb6e04fb0212',
+      uuid: '19b10000-8001-537e-4f6c-d104768a1214',
       properties: ['BLEWrite'],
       structure: ['Uint8', 'Uint8', 'Uint8'],
       data: { 'R': [], 'G': [], 'B': [] },
@@ -343,7 +343,7 @@
       writeValue: null
     },
     quaternion: {
-      uuid: '6fbe1da7-7001-44de-92c4-bb6e04fb0212',
+      uuid: '19b10000-7001-537e-4f6c-d104768a1214',
       properties: ['BLENotify'],
       structure: ['Float32', 'Float32', 'Float32', 'Float32'],
       data: { 'x': [], 'y': [], 'z': [], 'w': [] },
@@ -352,21 +352,21 @@
     },
     bsec:
     {
-      uuid: '6fbe1da7-9001-44de-92c4-bb6e04fb0212',
+      uuid: '19b10000-9001-537e-4f6c-d104768a1214',
       properties: ['BLERead'],
       structure: ['Float32'],
       data: { 'bsec': [] }
     },
     co2:
     {
-      uuid: '6fbe1da7-9002-44de-92c4-bb6e04fb0212',
+      uuid: '19b10000-9002-537e-4f6c-d104768a1214',
       properties: ['BLERead'],
       structure: ['Uint32'],
       data: { 'co2': [] }
     },
     gas:
     {
-      uuid: '6fbe1da7-9003-44de-92c4-bb6e04fb0212',
+      uuid: '19b10000-9003-537e-4f6c-d104768a1214',
       properties: ['BLERead'],
       structure: ['Uint8'],
       data: { 'gas': [] }
@@ -374,7 +374,7 @@
   }
 
   const sensors = Object.keys(NiclaSenseME);
-  const SERVICE_UUID = '6fbe1da7-0000-44de-92c4-bb6e04fb0212';
+  const SERVICE_UUID = '19b10000-0000-537e-4f6c-d104768a1214';
   var bytesReceived = 0;
   var bytesPrevious = 0;
 

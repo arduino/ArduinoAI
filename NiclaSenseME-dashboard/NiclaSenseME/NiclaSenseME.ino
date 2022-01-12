@@ -24,7 +24,7 @@ Sketch and web dashboard copy-fixed to be used with the Nicla Sense ME by Pablo 
 #include "Arduino_BHY2.h"
 #include <ArduinoBLE.h>
 
-#define BLE_SENSE_UUID(val) ("6fbe1da7-" val "-44de-92c4-bb6e04fb0212")
+#define BLE_SENSE_UUID(val) ("19b10000" val "-537e-4f6c-d104768a1214")
 
 const int VERSION = 0x00000000;
 
