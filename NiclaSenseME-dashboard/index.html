@@ -511,6 +511,10 @@
 
     snack('Device ' + device.name + ' has been disconnected.', 1);
     msg("Disconnected");
+
+    // The board's LED will go red once it detects it has been disconnected
+    ledLight.color.setRGB(255,0,0);
+    ledMaterial.color.setRGB(255,0,0);
   }
 
   function BLEwriteTo(sensor) {
@@ -530,9 +534,16 @@
 <script>
 
   function initColorPicker() {
+    //Default color blue
+    var rgb_values = Uint8Array.of(0, 0, 255);
+    NiclaSenseME['led'].writeValue = rgb_values;
+    BLEwriteTo('led');
+    ledMaterial.color.setRGB(0,0,255);
+    ledLight.color.setRGB(0,0,255);
+
     NiclaSenseME.led.colorPicker = new iro.ColorPicker("#color-picker-container", {
       width: 150,
-      color: "rgb(255, 0, 0)",
+      color: "rgb(0, 0, 255)",
       borderWidth: 1,
       borderColor: "#fff",
       sliderHeight: 6,
@@ -547,6 +558,8 @@
       NiclaSenseME['led'].writeValue = rgb_values;
       BLEwriteTo('led');
     }
+
+    
   }
 
   // Graphing
@@ -613,20 +626,26 @@
         var geometry = new THREE.BoxGeometry(1, 1, 1);
         ledMaterial = new THREE.MeshBasicMaterial({ color: 0x111111 });
         ledObject = new THREE.Mesh(geometry, ledMaterial);
-//        ledObject.position.set(-4.5, 4, 0);
-        ledObject.position.set(9, -10, 0);
+        ledObject.position.set(9, -10, -1);
+        
+        ledLight = new THREE.PointLight(0x111111, 3, 40);
+        ledLight.color.setRGB(0,255,0);
+        ledLight.position.set(9, -10, -1.2);
+        
+        ledMaterial.color.setRGB(0,255,0);
+
         arduinoModel.add(ledObject);
-        arduinoModel.rotation.x = 270 * (Math.PI/180);  // Show the bottom side of the board by default
-        ledLight = new THREE.PointLight(0x111111, 3, 100);
-        ledLight.position.set(8.7, -10, -5);
         arduinoModel.add(ledLight);
+
+        arduinoModel.rotation.x = 90 * (Math.PI/180);  // Show the bottom side of the board by default
+        
         var sphereSize = 1;
 
         // Light
         const color = 0xFFFFFF;
         const intensity = 1;
         const light = new THREE.DirectionalLight(color, intensity);
-        light.position.set(0, 0, -50);
+        light.position.set(-20, 100, -10);
         light.target.position.set(0, 0, 0);
         scene.add(light);
         scene.add(light.target);
