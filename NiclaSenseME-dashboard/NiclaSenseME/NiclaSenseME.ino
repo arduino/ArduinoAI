@@ -13,7 +13,7 @@ https://arduino.github.io/ArduinoAI/NiclaSenseME-dashboard/
 3) Click on the green button in the web page to connect the browser to the board over BLE
 
 
-Web dashboard by D Pajak
+Web dashboard by D. Pajak
 
 Device sketch based on example by Sandeep Mistry and Massimo Banzi
 Sketch and web dashboard copy-fixed to be used with the Nicla Sense ME by Pablo Marquínez
@@ -117,6 +117,9 @@ void setup(){
   service.addCharacteristic(gasCharacteristic);
   service.addCharacteristic(rgbLedCharacteristic);
 
+  // Disconnect event handler
+  BLE.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
+  
   // Sensors event handlers
   temperatureCharacteristic.setEventHandler(BLERead, onTemperatureCharacteristicRead);
   humidityCharacteristic.setEventHandler(BLERead, onHumidityCharacteristicRead);
@@ -171,6 +174,10 @@ void loop(){
     }
 
   }
+}
+
+void blePeripheralDisconnectHandler(BLEDevice central){
+  nicla::leds.setColor(red);
 }
 
 void onTemperatureCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
