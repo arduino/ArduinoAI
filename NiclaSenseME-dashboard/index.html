@@ -297,7 +297,7 @@
 
   var maxRecords = 64;
 
-  var BLEsense =
+  var NiclaSenseME =
   {
     temperature:
     {
@@ -373,7 +373,7 @@
     }
   }
 
-  const sensors = Object.keys(BLEsense);
+  const sensors = Object.keys(NiclaSenseME);
   const SERVICE_UUID = '6fbe1da7-0000-44de-92c4-bb6e04fb0212';
   var bytesReceived = 0;
   var bytesPrevious = 0;
@@ -440,21 +440,21 @@
     // Set up the characteristics
     for (const sensor of sensors) {
       msg('characteristic ' + sensor + "...");
-      BLEsense[sensor].characteristic = await service.getCharacteristic(BLEsense[sensor].uuid);
+      NiclaSenseME[sensor].characteristic = await service.getCharacteristic(NiclaSenseME[sensor].uuid);
       // Set up notification
-      if (BLEsense[sensor].properties.includes("BLENotify")) {
-        BLEsense[sensor].characteristic.addEventListener('characteristicvaluechanged', function (event) { handleIncoming(BLEsense[sensor], event.target.value); });
-        await BLEsense[sensor].characteristic.startNotifications();
+      if (NiclaSenseME[sensor].properties.includes("BLENotify")) {
+        NiclaSenseME[sensor].characteristic.addEventListener('characteristicvaluechanged', function (event) { handleIncoming(NiclaSenseME[sensor], event.target.value); });
+        await NiclaSenseME[sensor].characteristic.startNotifications();
       }
       // Set up polling for read
-      if (BLEsense[sensor].properties.includes("BLERead")) {
-        BLEsense[sensor].polling = setInterval(function () {
-          BLEsense[sensor].characteristic.readValue().then(function (data) { handleIncoming(BLEsense[sensor], data); })
+      if (NiclaSenseME[sensor].properties.includes("BLERead")) {
+        NiclaSenseME[sensor].polling = setInterval(function () {
+          NiclaSenseME[sensor].characteristic.readValue().then(function (data) { handleIncoming(NiclaSenseME[sensor], data); })
         }
           , 500);
       }
 
-      BLEsense[sensor].rendered = false;
+      NiclaSenseME[sensor].rendered = false;
     }
     pairButton.style.backgroundColor = 'green';
     pairButton.style.color = 'white';
@@ -501,8 +501,8 @@
     snack("Device disconnected, please retry", 1)
     // clear read polling
     for (const sensor of sensors) {
-      if (typeof BLEsense[sensor].polling !== 'undefined') {
-        clearInterval(BLEsense[sensor].polling);
+      if (typeof NiclaSenseME[sensor].polling !== 'undefined') {
+        clearInterval(NiclaSenseME[sensor].polling);
       }
     }
     // clear color picker write
@@ -514,11 +514,11 @@
   }
 
   function BLEwriteTo(sensor) {
-    if (BLEsense[sensor].writeBusy) return; // dropping writes when one is in progress instead of queuing as LED is non-critical / realtime
-    BLEsense[sensor].writeBusy = true; // Ensure no write happens when GATT operation in progress
-    BLEsense[sensor].characteristic.writeValue(BLEsense[sensor].writeValue)
+    if (NiclaSenseME[sensor].writeBusy) return; // dropping writes when one is in progress instead of queuing as LED is non-critical / realtime
+    NiclaSenseME[sensor].writeBusy = true; // Ensure no write happens when GATT operation in progress
+    NiclaSenseME[sensor].characteristic.writeValue(NiclaSenseME[sensor].writeValue)
       .then(_ => {
-        BLEsense[sensor].writeBusy = false;
+        NiclaSenseME[sensor].writeBusy = false;
       })
       .catch(error => {
         console.log(error);
@@ -530,7 +530,7 @@
 <script>
 
   function initColorPicker() {
-    BLEsense.led.colorPicker = new iro.ColorPicker("#color-picker-container", {
+    NiclaSenseME.led.colorPicker = new iro.ColorPicker("#color-picker-container", {
       width: 150,
       color: "rgb(255, 0, 0)",
       borderWidth: 1,
@@ -539,12 +539,12 @@
       sliderMargin: 6
     });
     // RGB Color Picker
-    BLEsense.led.colorPicker.on('color:change', updateModelLed);
+    NiclaSenseME.led.colorPicker.on('color:change', updateModelLed);
     function updateModelLed(color) {
       ledLight.color.setHex("0x" + color.hexString.substring(1, 7));
       ledMaterial.color.set(color.hexString)   // where r, g, and b are 0 to 1
       var rgb_values = Uint8Array.of(color.rgb.r, color.rgb.g, color.rgb.b);
-      BLEsense['led'].writeValue = rgb_values;
+      NiclaSenseME['led'].writeValue = rgb_values;
       BLEwriteTo('led');
     }
   }
@@ -554,7 +554,7 @@
   var colorIndex = 0;
   function initGraph(sensor) {
     var title = sensor;
-    var series = Object.keys(BLEsense[sensor].data);
+    var series = Object.keys(NiclaSenseME[sensor].data);
     var format = [];
     series.forEach(function (item) {
       colorIndex++;
@@ -649,9 +649,9 @@
     ctx.fillStyle = "#111111";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     for (i = 0; i < maxRecords; i++) {
-      R = BLEsense[sensor].data.R[i];
-      G = BLEsense[sensor].data.G[i];
-      B = BLEsense[sensor].data.B[i];
+      R = NiclaSenseME[sensor].data.R[i];
+      G = NiclaSenseME[sensor].data.G[i];
+      B = NiclaSenseME[sensor].data.B[i];
       total = R + G + B;
       R = R / total * 255; G = G / total * 255; B = B / total * 255;
       ctx.fillStyle = "rgba(" + R + "," + G + "," + B + ")";
@@ -662,17 +662,17 @@
   Array.prototype.latest = function () { return this[this.length - 1]; };
 
   function graph(sensor) {
-    var labels = Object.keys(BLEsense[sensor].data);
+    var labels = Object.keys(NiclaSenseME[sensor].data);
     var values = [];
     // after
     labels.forEach(function (label) {
-      values.push(BLEsense[sensor].data[label]);
+      values.push(NiclaSenseME[sensor].data[label]);
     });
     Plotly.restyle(sensor, { y: values });
   }
 
   function digit(sensor) {
-    const value = BLEsense[sensor].data[sensor].latest();
+    const value = NiclaSenseME[sensor].data[sensor].latest();
     const div = document.getElementById(sensor + "-value");
     if (!Number.isNaN(value)) { div.innerHTML = Math.round(value * 10) / 10; };
   }
@@ -680,10 +680,10 @@
   function update3d(sensor) {
   
     // Get the quaternion values
-    var x = BLEsense['quaternion'].data.x.latest();
-    var y = BLEsense['quaternion'].data.y.latest();
-    var z = BLEsense['quaternion'].data.z.latest();
-    var w = BLEsense['quaternion'].data.w.latest();
+    var x = NiclaSenseME['quaternion'].data.x.latest();
+    var y = NiclaSenseME['quaternion'].data.y.latest();
+    var z = NiclaSenseME['quaternion'].data.z.latest();
+    var w = NiclaSenseME['quaternion'].data.w.latest();
 
     // Construct the quaternion object with the values and apply that to the 3D model
     const quaternion = new THREE.Quaternion(x, y, z, w);
@@ -710,11 +710,11 @@
   var skip_frame = false;
   function draw() {
     function updateViz(sensor, fns) {
-      if (BLEsense[sensor].rendered == false) { // only render if new values are received
+      if (NiclaSenseME[sensor].rendered == false) { // only render if new values are received
         fns.forEach(function (fn) {
           fn(sensor);
         });
-        BLEsense[sensor].rendered = true;
+        NiclaSenseME[sensor].rendered = true;
       }
     }
     if (skip_frame == false) { // TODO update with fuction to iterate object with viz function as a property
