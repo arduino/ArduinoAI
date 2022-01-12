@@ -405,7 +405,7 @@
     snackBar.style.visibility = "visible";
     snackBar.className = "show";
 
-    var warnEmoji = warningLevel ? '&#x26A0  ' : '&#10004  ';
+    var warnEmoji = warningLevel ? '☝️  ' : '✅  ';
 
     setTimeout(function () { snackBar.className = snackBar.className.replace("show", ""); }, 501);
     snackBar.innerHTML = warnEmoji + m + ' <span onClick=hideSnack() style="cursor:pointer; margin-left: 15px"> ✖ </span> ';
