@@ -215,5 +215,5 @@ void onRgbLedCharacteristicWrite(BLEDevice central, BLECharacteristic characteri
   byte g = rgbLedCharacteristic[1];
   byte b = rgbLedCharacteristic[2];
 
-  nicla::leds.setColor(b, g, r);
+  nicla::leds.setColor(r, g, b);
 }
