@@ -1,0 +1,116 @@
+BLE Sense - BLE specifications.txt
+==================================
+
+GAP (Adversisement)
+-------------------
+Local name:    BLESense-<last 4 characters of BT address>
+Serivice UUID: 19b10000-0000-537e-4f6c-d104768a1214
+
+
+GATT
+----
+
+Service
+~~~~~~~
+
+UUID: 19b10000-0000-537e-4f6c-d104768a1214
+
+
+Version Characteristic
+~~~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-1001-537e-4f6c-d104768a1214
+Properties: read
+Value size: 4 bytes
+Data format: 32-bit unsigned integer (little endian)
+Description: Version of firmware
+
+Temperature Characteristic
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-2001-537e-4f6c-d104768a1214
+Properties: read
+Value size: 2 bytes
+Data format: 16-bit float (little endian)
+Description: Temperature sensor value Celcius
+
+Humidity Characteristic
+~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-3001-537e-4f6c-d104768a1214
+Properties: read
+Value size: 1 bytes
+Data format: 8-bit unsigned integer (little endian)
+Description: Humidity sensor value %
+
+Pressure Characteristic
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-4001-537e-4f6c-d104768a1214
+Properties: read
+Value size: 1 byte
+Data format: 8-bit unsigned integer (little endian)
+Description: Pressure sensor value in kPA
+
+Acceleration Characteristic
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-5001-537e-4f6c-d104768a1214
+Properties: notify
+Value size: 12 bytes
+Data format: Array of 3 x 16-bit IEEE floats (little endian)
+Description: X, Y, Z acceleration values in G's
+
+Gyroscope Characteristic
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-6001-537e-4f6c-d104768a1214
+Properties: notify
+Value size: 12 bytes
+Data format: Array of 3 x 16-bit IEEE floats (little endian)
+Description: X, Y, Z gyroscope values in degrees per second
+
+Quaternion Characteristic
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-7001-537e-4f6c-d104768a1214
+Properties: notify
+Value size: 16 bytes
+Data format: Array of 4 x 16-bit IEEE floats (little endian)
+Description: X, Y, Z, W quaternion values
+
+RGB LED Characteristic
+~~~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-8001-537e-4f6c-d104768a1214
+Properties: write
+Value size: 3 bytes
+Data format: Array of unsigned 8-bits (little endian)
+Description: RGB led value, 0 => off, 255 => on
+
+BSEC Characteristic
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-9001-537e-4f6c-d104768a1214
+Properties: read
+Value size: 4 bytes
+Data format: 32-bit float (little endian)
+Description: Indoor Air Quality (IAQ) sensor value
+
+Co2 Characteristic
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-9002-537e-4f6c-d104768a1214
+Properties: read
+Value size: 4 bytes
+Data format: 32-bit unsigned integer (little endian)
+Description: carbon monoxide and hydrogen in the part per billion (ppb) range
+
+Gas Characteristic
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+UUID:       19b10000-9003-537e-4f6c-d104768a1214
+Properties: read
+Value size: 1 byte
+Data format: 8-bit unsigned integer (little endian)
+Description: volatile sulfur compounds (VSCs)
