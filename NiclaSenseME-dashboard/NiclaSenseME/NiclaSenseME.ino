@@ -186,7 +186,7 @@ void onTemperatureCharacteristicRead(BLEDevice central, BLECharacteristic charac
 }
 
 void onHumidityCharacteristicRead(BLEDevice central, BLECharacteristic characteristic){
-  uint8_t humidityValue = humidity.value();
+  uint8_t humidityValue = humidity.value() + 0.5f;  //since we are truncating the float type to a uint8_t, we want to round it
   humidityCharacteristic.writeValue(humidityValue);
 }
 
