@@ -24,7 +24,7 @@ Sketch and web dashboard copy-fixed to be used with the Nicla Sense ME by Pablo 
 #include "Arduino_BHY2.h"
 #include <ArduinoBLE.h>
 
-#define BLE_SENSE_UUID(val) ("19b10000" val "-537e-4f6c-d104768a1214")
+#define BLE_SENSE_UUID(val) ("19b10000-" val "-537e-4f6c-d104768a1214")
 
 const int VERSION = 0x00000000;
 
@@ -66,8 +66,8 @@ void setup(){
   nicla::leds.begin();
   nicla::leds.setColor(green);
 
-  //Sensors intialization
-  BHY2.begin();
+  //Sensors initialization
+  BHY2.begin(NICLA_STANDALONE);
   temperature.begin();
   humidity.begin();
   pressure.begin();
@@ -78,7 +78,7 @@ void setup(){
   gas.begin();
 
   if (!BLE.begin()){
-    Serial.println("Failled to initialized BLE!");
+    Serial.println("Failed to initialized BLE!");
 
     while (1)
       ;
