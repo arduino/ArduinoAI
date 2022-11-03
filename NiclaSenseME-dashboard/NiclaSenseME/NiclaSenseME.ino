@@ -91,7 +91,7 @@ void setup(){
 
   address.toUpperCase();
 
-  name = "BLESense-";
+  name = "NiclaSenseME-";
   name += address[address.length() - 5];
   name += address[address.length() - 4];
   name += address[address.length() - 2];
